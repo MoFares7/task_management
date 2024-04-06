@@ -44,12 +44,7 @@ class DatabaseHelper {
     return db.query(tasksTable, where: 'type = ?', whereArgs: [type]);
   }
 
-  Future<void> insertTask1(Map<String, dynamic> task, taskType) async {
-    final Database db = await database;
-    await db.insert(tasksTable, task);
-  }
-
-Future<void> insertTask(Map<String, dynamic> task, String taskType) async {
+  Future<void> insertTask(Map<String, dynamic> task, String taskType) async {
     final Database db = await database;
     final taskWithDetails = {
       ...task,
@@ -58,4 +53,8 @@ Future<void> insertTask(Map<String, dynamic> task, String taskType) async {
     await db.insert(tasksTable, taskWithDetails);
   }
 
+  Future<void> deleteTask(int id) async {
+    final Database db = await database;
+    await db.delete(tasksTable, where: 'id = ?', whereArgs: [id]);
+  }
 }

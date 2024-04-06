@@ -58,6 +58,7 @@ class TextBox extends StatelessWidget {
                 onChanged: onChanged,
                 keyboardType: inputType,
                 obscureText: isPasswordField && isHidden,
+                style: const TextStyle(color: Colors.black),
                 decoration: InputDecoration(
                   hintText: hint ?? title,
                   isDense: isFieldDense,
@@ -68,7 +69,6 @@ class TextBox extends StatelessWidget {
                       .bodyLarge!
                       .copyWith(color: Theme.of(context).hintColor),
                   border: OutlineInputBorder(
-                    
                     borderRadius: BorderRadius.circular(16),
                     // borderSide: BorderSide()
                   ),
