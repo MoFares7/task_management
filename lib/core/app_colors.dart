@@ -8,7 +8,7 @@ class AppColors {
   static const Color cardColor = Color(0XFF219ebc);
 
   static final Color greeColor =
-      Color.fromARGB(243, 255, 255, 255).withOpacity(0.1);
+      const Color.fromARGB(243, 255, 255, 255).withOpacity(0.1);
   static const Color lightGreyColor = Color(0XFFEEEEEE);
   static const Color greenColor = Color(0XFF1E935B);
 }

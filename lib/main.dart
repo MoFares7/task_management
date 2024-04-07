@@ -7,6 +7,7 @@ import 'package:task_management_fares/core/ioc/app_injector.dart';
 import 'package:task_management_fares/core/storage/storage.dart';
 import 'package:task_management_fares/feature/auth/presentation/cubit/auth_cubit.dart';
 import 'package:task_management_fares/feature/auth/presentation/pages/login_screen.dart';
+import 'package:task_management_fares/feature/home/presentation/cubit/task_user_cubit.dart';
 import 'package:task_management_fares/feature/home/presentation/pages/home_screen.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:task_management_fares/feature/tasks/presentation/cubit/task_cubit.dart';
@@ -22,7 +23,6 @@ void main() async {
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.dark,
       systemNavigationBarColor: Colors.transparent,
-      // systemNavigationBarIconBrightness: Brightness.dark,
     ),
   );
 
@@ -49,6 +49,10 @@ class MyApp extends StatelessWidget {
           ),
         BlocProvider<TaskCubit>(
           create: (context) => appInjector.inject<TaskCubit>(),
+        ),
+    
+      BlocProvider<TaskUserCubit>(
+          create: (context) => appInjector.inject<TaskUserCubit>()..getTaskUser(),
         ),
       ],
       child: MaterialApp(

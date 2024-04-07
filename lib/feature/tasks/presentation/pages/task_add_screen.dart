@@ -9,7 +9,7 @@ import 'package:task_management_fares/core/app_colors.dart';
 import 'package:task_management_fares/feature/tasks/presentation/cubit/task_cubit.dart';
 
 class TaskAddScreen extends StatelessWidget {
-  TaskAddScreen({Key? key, required this.taskType, required this.color});
+  TaskAddScreen({super.key, required this.taskType, required this.color});
 
   final _formKey = GlobalKey<FormBuilderState>();
   final String taskType;

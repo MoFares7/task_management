@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:task_management_fares/core/app_colors.dart';
 
-class MainTaskBox extends StatelessWidget {
-  const MainTaskBox(
-      {Key? key, required this.titleType, required this.color, this.onTap})
-      : super(key: key);
+class TypeTaskBox extends StatelessWidget {
+  const TypeTaskBox(
+      {super.key, required this.titleType, required this.color, this.onTap});
 
   final String titleType;
   final Color color;

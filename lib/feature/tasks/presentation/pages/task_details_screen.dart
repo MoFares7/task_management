@@ -7,12 +7,12 @@ import 'package:toast/toast.dart';
 
 class TaskDetailsScreen extends StatelessWidget {
   TaskDetailsScreen({
-    Key? key,
+    super.key,
     required this.taskID,
     required this.taskName,
     required this.taskDescription,
     required this.taskType,
-  }) : super(key: key);
+  });
 
   final int taskID;
   final String taskName;
@@ -40,6 +40,15 @@ class TaskDetailsScreen extends StatelessWidget {
               .textTheme
               .titleLarge!
               .copyWith(color: AppColors.lightGreyColor),
+        ),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
         actions: [
           IconButton(
@@ -171,28 +180,3 @@ class TaskDetailsScreen extends StatelessWidget {
     );
   }
 }
-
-
-
-     // AppUtils.showEditDialog(
-              //     context,
-              //     taskName,
-              //     (value) {
-              //       _editedTaskName.value = value;
-              //     },
-              //     (value) {
-              //       _editedTaskDescription.value = value;
-              //     },
-              //     taskDescription,
-              //     () async {
-              //       final updatedTask = {
-              //         'name': _editedTaskName.value,
-              //         'description': _editedTaskDescription.value,
-              //       };
-              //       // Call the updateTask method from the TaskCubit
-              //       context.read<TaskCubit>().updateTask(taskID, updatedTask);
-              //       Navigator.of(context).pop();
-
-              //       ToastContext().init(context);
-              //       Toast.show('Task updated successfully', duration: 3);
-              //     });

@@ -18,8 +18,18 @@ class LocalStorage {
     token = token.replaceAll('"', '');
 
     await storage.write("USER_TOKEN", token);
+  } 
+   Future<void> saveValue(String key , String value) async {
+    // delete double quotes from token
+    value = value.replaceAll('"', '');
+
+    await storage.write(key, value);
   }
 
+  String? getValue(String value) {
+    return storage.read(value);
+  }
+  
   String? getToken() {
     return storage.read("USER_TOKEN");
   }

@@ -12,14 +12,14 @@ class TaskBox extends StatelessWidget {
   final VoidCallback onDelete;
 
   const TaskBox({
-    Key? key,
+    super.key,
     required this.taskID,
     required this.taskName,
     required this.taskDescription,
     required this.taskType,
     required this.cardColor,
     required this.onDelete,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

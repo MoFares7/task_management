@@ -1,30 +1,54 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
-import 'package:flutter/material.dart';
+import 'package:bloc_test/bloc_test.dart';
+import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
+import 'package:task_management_fares/core/exceptions/api.exception.dart';
+import 'package:task_management_fares/feature/auth/domain/entities/user.dart';
+import 'package:task_management_fares/feature/auth/presentation/cubit/auth_cubit.dart';
+import 'package:task_management_fares/feature/auth/domain/usecases/login_user.dart';
 
-import 'package:task_management_fares/main.dart';
+class MockLoginUser extends Mock implements LoginUser {}
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget( MyApp());
+  group('AuthCubit', () {
+    late AuthCubit authCubit;
+    late MockLoginUser mockLoginUser;
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    setUp(() {
+      mockLoginUser = MockLoginUser();
+      authCubit = AuthCubit(mockLoginUser);
+    });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    tearDown(() {
+      authCubit.close();
+    });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    test('initial state is AuthInitial', () {
+      expect(authCubit.state, equals(AuthInitial()));
+    });
+
+    blocTest<AuthCubit, AuthState>(
+      'emits [AuthLoading, UserLoggedIn] when login is successful',
+      build: () {
+        when(mockLoginUser(User())).thenAnswer(
+          (_) => Future.value(const Right({'token': 'token'})),
+        );
+        return authCubit;
+      },
+      act: (cubit) => cubit.login(User(email: 'email', password: 'password')),
+      expect: () => [AuthLoading(), UserLoggedIn()],
+    );
+
+    blocTest<AuthCubit, AuthState>(
+      'emits [AuthLoading, UserLoginError] when login fails',
+      build: () {
+        when(mockLoginUser(User())).thenAnswer(
+          (_) => Future.value(const Left(ApiException.serverError)),
+        );
+        return authCubit;
+      },
+      act: (cubit) => cubit.login(User(email: 'email', password: 'password')),
+      expect: () => [AuthLoading(), isA<UserLoginError>()],
+    );
   });
 }

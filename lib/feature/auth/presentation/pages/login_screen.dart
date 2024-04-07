@@ -3,13 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
-import 'package:task_management_fares/common/loading_btn.dart';
 import 'package:task_management_fares/common/primary_btn.dart';
 import 'package:task_management_fares/common/textbox_main.dart';
 import 'package:task_management_fares/core/app_colors.dart';
-import 'package:task_management_fares/core/app_route.dart';
 import 'package:task_management_fares/core/app_utils.dart';
-import 'package:task_management_fares/core/exceptions/api.exception.dart';
+import 'package:task_management_fares/core/storage/storage.dart';
 import 'package:task_management_fares/feature/auth/data/models/user_moddel.dart';
 import 'package:task_management_fares/feature/auth/presentation/cubit/auth_cubit.dart';
 import 'package:task_management_fares/feature/auth/presentation/widgets/page_title.dart';
@@ -20,6 +18,8 @@ class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
 
   final _formKey = GlobalKey<FormBuilderState>();
+  final LocalStorage localStorage = LocalStorage.instance;
+
   UserModel _collectFormData() {
     return UserModel(
       email: _formKey.currentState!.fields['email']!.value,
@@ -72,15 +72,12 @@ class LoginScreen extends StatelessWidget {
 
                 BlocListener<AuthCubit, AuthState>(
                   listener: (context, state) {
-                    print(state);
                     if (state is AuthLoading) {
                       AppUtils.showLoadingDialog(context);
                     }
 
-                    // hide the dialog
                     if (state is UserLoggedIn) {
                       Navigator.pop(context);
-                      print("object succeeessss");
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
@@ -89,10 +86,6 @@ class LoginScreen extends StatelessWidget {
 
                     // failure state
                     if (state is UserLoginError) {
-                      // hide the dialog
-                      // Show the error message
-                      print("Error response body: ${state.errorMessage}");
-
                       Navigator.of(context).pop();
                       ToastContext().init(context);
                       Toast.show(state.errorMessage, duration: 3);
@@ -109,6 +102,9 @@ class LoginScreen extends StatelessWidget {
 
                         // trigger the event
                         context.read<AuthCubit>().login(user);
+                        // here save email for search on user name and image
+                        localStorage.saveValue("email",
+                            _formKey.currentState!.fields['email']!.value);
                       }
                     },
                   ),
@@ -116,7 +112,6 @@ class LoginScreen extends StatelessWidget {
 
                 const Gap(16),
 
-                // Don't Have an Account Section
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -126,11 +121,7 @@ class LoginScreen extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     TextButton(
-                      onPressed: () {
-                        // navigate back to signup page
-                        Navigator.of(context)
-                            .pushNamed(AppRouter.signupRoutePath);
-                      },
+                      onPressed: () {},
                       style: TextButton.styleFrom(
                         backgroundColor:
                             Theme.of(context).scaffoldBackgroundColor,
