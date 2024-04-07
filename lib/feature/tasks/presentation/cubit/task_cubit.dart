@@ -8,7 +8,6 @@ part 'task_state.dart';
 class TaskCubit extends Cubit<TaskState> {
   TaskCubit() : super(TaskInitial());
 
-  // Fetch tasks method
   Future<void> fetchTasks(String taskType) async {
     emit(GetTasksLoading());
     try {
@@ -31,6 +30,16 @@ class TaskCubit extends Cubit<TaskState> {
       fetchTasks(taskType);
     } catch (e) {
       emit(TaskAddError(e.toString()));
+    }
+  }
+
+  Future<void> updateTask(int taskId, Map<String, dynamic> updatedTask) async {
+    emit(TaskUpdateLoading());
+    try {
+      await DatabaseHelper().updateTask(taskId, updatedTask);
+      emit(TaskUpdateSuccess());
+    } catch (e) {
+      emit(TaskUpdateError(e.toString()));
     }
   }
 

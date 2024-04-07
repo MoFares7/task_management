@@ -3,6 +3,6 @@ class AppAssets {
   static const String user = 'assets/images/user.jpg';
 
   // SVGs
-  static const String errorSvg = 'assets/images/svg/error.svg';
-  static const String noDataSvg = 'assets/images/svg/no_data.svg';
+  static const String errorSvg = 'assets/svg/error.svg';
+  static const String noDataSvg = 'assets/svg/no_data.svg';
 }

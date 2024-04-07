@@ -22,6 +22,7 @@ class FailureCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
           SvgPicture.asset(
@@ -29,7 +30,7 @@ class FailureCard extends StatelessWidget {
             fit: BoxFit.cover,
             height: 160,
           ),
-          const Gap(64),
+          const Gap(16),
           Text(
             label ??
                 (isNoDataView

@@ -43,6 +43,7 @@ class HomeScreen extends StatelessWidget {
                 'Task Type',
                 style: Theme.of(context).textTheme.titleMedium,
               ),
+              const Gap(16),
               Expanded(
                 child: GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -62,7 +63,7 @@ class HomeScreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    const TasksScreen(taskType: 'Work')),
+                                    TasksScreen(taskType: 'Work')),
                           );
                         },
                       );
@@ -76,7 +77,7 @@ class HomeScreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    const TasksScreen(taskType: 'Education')),
+                                    TasksScreen(taskType: 'Education')),
                           );
                         },
                       );
@@ -90,7 +91,7 @@ class HomeScreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    const TasksScreen(taskType: 'Healthy')),
+                                    TasksScreen(taskType: 'Healthy')),
                           );
                         },
                       );
@@ -104,7 +105,7 @@ class HomeScreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    const TasksScreen(taskType: 'Various')),
+                                    TasksScreen(taskType: 'Various')),
                           );
                         },
                       );

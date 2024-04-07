@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_management_fares/common/failur_card.dart';
 import 'package:task_management_fares/core/app_colors.dart';
+import 'package:task_management_fares/core/app_utils.dart';
 import 'package:task_management_fares/feature/tasks/presentation/cubit/task_cubit.dart';
 import 'package:task_management_fares/feature/tasks/presentation/pages/task_add_screen.dart';
 import 'package:task_management_fares/feature/tasks/presentation/widgets/task_box.dart';
 
 class TasksScreen extends StatefulWidget {
-  const TasksScreen({Key? key, required this.taskType}) : super(key: key);
+  TasksScreen({Key? key, required this.taskType}) : super(key: key);
 
   final String taskType;
-
+  AppUtils appUtils = AppUtils();
   @override
   _TasksScreenState createState() => _TasksScreenState();
 }
@@ -26,7 +27,7 @@ class _TasksScreenState extends State<TasksScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: _getAppBarColor(widget.taskType),
+        backgroundColor: AppUtils.colorController(widget.taskType),
         centerTitle: true,
         title: Text(
           'Task Management',
@@ -47,7 +48,7 @@ class _TasksScreenState extends State<TasksScreen> {
                 MaterialPageRoute(
                   builder: (context) => TaskAddScreen(
                     taskType: widget.taskType,
-                    color: _getAppBarColor(widget.taskType),
+                    color: AppUtils.colorController(widget.taskType),
                   ),
                 ),
               );
@@ -63,7 +64,7 @@ class _TasksScreenState extends State<TasksScreen> {
             return Center(
               child: FailureCard(
                 isNoDataView: false,
-                colorButton: _getAppBarColor(widget.taskType),
+                colorButton: AppUtils.colorController(widget.taskType),
                 onRetry: () {},
               ),
             );
@@ -73,7 +74,7 @@ class _TasksScreenState extends State<TasksScreen> {
               return Center(
                 child: FailureCard(
                   isNoDataView: true,
-                  colorButton: _getAppBarColor(widget.taskType),
+                  colorButton: AppUtils.colorController(widget.taskType),
                   onRetry: () {},
                 ),
               );
@@ -102,9 +103,12 @@ class _TasksScreenState extends State<TasksScreen> {
                               task['description'] ?? 'No Description';
                           final taskType = task['type'];
                           return TaskBox(
+                            taskID: taskID,
                             taskName: taskName,
                             taskDescription: taskDescription,
-                            cardColor: _getAppBarColor(widget.taskType),
+                            taskType: taskType,
+                            cardColor:
+                                AppUtils.colorController(widget.taskType),
                             onDelete: () {
                               // Delete task
                               context
@@ -125,18 +129,5 @@ class _TasksScreenState extends State<TasksScreen> {
         },
       ),
     );
-  }
-
-  Color _getAppBarColor(String taskType) {
-    switch (taskType) {
-      case 'Various':
-        return AppColors.cardColor;
-      case 'Education':
-        return AppColors.secondaryColor;
-      case 'Healthy':
-        return AppColors.skyColor;
-      default:
-        return AppColors.primaryColor;
-    }
   }
 }

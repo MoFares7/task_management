@@ -9,7 +9,7 @@ abstract class TaskState extends Equatable {
 
 class TaskInitial extends TaskState {}
 
-//! get tasks bloc state
+//! Get tasks bloc state
 class GetTasksLoading extends TaskState {}
 
 class GetTasksSuccess extends TaskState {
@@ -30,7 +30,7 @@ class GetTasksError extends TaskState {
   List<Object> get props => [error];
 }
 
-//! add task bloc state
+//! Add task bloc state
 class TaskAddLoading extends TaskState{}
 
 class TaskAddSuccess extends TaskState{}
@@ -44,7 +44,21 @@ class TaskAddError  extends TaskState{
   List<Object> get props => [error];
 }
 
-//! delete task bloc state
+//! Update task bloc state
+class TaskUpdateLoading extends TaskState{}
+
+class TaskUpdateSuccess extends TaskState{}
+
+class TaskUpdateError  extends TaskState{ 
+   final String error;
+
+  const TaskUpdateError(this.error);
+
+  @override
+  List<Object> get props => [error];
+}
+
+//! Delete task bloc state
 class TaskDeleteLoading extends TaskState {}
 
 class TaskDeleteSuccess extends TaskState {}

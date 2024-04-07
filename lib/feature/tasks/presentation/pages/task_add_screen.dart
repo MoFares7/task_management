@@ -30,7 +30,7 @@ class TaskAddScreen extends StatelessWidget {
             return FormBuilder(
               key: _formKey,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
                     decoration: BoxDecoration(
@@ -40,8 +40,8 @@ class TaskAddScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 8),
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
                             "Add New Task",
@@ -93,7 +93,7 @@ class TaskAddScreen extends StatelessWidget {
                             validator: FormBuilderValidators.required(
                                 errorText: ('Description is required')),
                           ),
-                          const Gap(64),
+                          const Gap(32),
                           PrimaryButton(
                             backgroundColor: color,
                             label: 'Add Task',
