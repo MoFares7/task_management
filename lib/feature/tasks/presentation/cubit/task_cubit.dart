@@ -33,11 +33,13 @@ class TaskCubit extends Cubit<TaskState> {
     }
   }
 
-  Future<void> updateTask(int taskId, Map<String, dynamic> updatedTask) async {
+  Future<void> updateTask(
+      int taskId, String taskType, Map<String, dynamic> updatedTask) async {
     emit(TaskUpdateLoading());
     try {
       await DatabaseHelper().updateTask(taskId, updatedTask);
       emit(TaskUpdateSuccess());
+      fetchTasks(taskType);
     } catch (e) {
       emit(TaskUpdateError(e.toString()));
     }

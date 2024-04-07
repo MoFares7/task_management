@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_management_fares/core/app_colors.dart';
-import 'package:task_management_fares/core/storage/database.dart';
+import 'package:task_management_fares/core/app_utils.dart';
 import 'package:task_management_fares/feature/tasks/presentation/cubit/task_cubit.dart';
-import 'package:task_management_fares/utils/helper.dart';
+import 'package:toast/toast.dart';
 
-class TaskDetailsScreen extends StatefulWidget {
-  final int taskID;
-  final String taskName;
-  final String taskDescription;
-  final String taskType;
-
+class TaskDetailsScreen extends StatelessWidget {
   TaskDetailsScreen({
     Key? key,
     required this.taskID,
@@ -19,26 +14,25 @@ class TaskDetailsScreen extends StatefulWidget {
     required this.taskType,
   }) : super(key: key);
 
-  @override
-  _TaskDetailsScreenState createState() => _TaskDetailsScreenState();
-}
+  final int taskID;
+  final String taskName;
+  final String taskDescription;
+  final String taskType;
 
-class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
-  late String _editedTaskName;
-  late String _editedTaskDescription;
-
-  @override
-  void initState() {
-    super.initState();
-    _editedTaskName = widget.taskName;
-    _editedTaskDescription = widget.taskDescription;
-  }
+  final ValueNotifier<String> _editedTaskName = ValueNotifier<String>('');
+  final ValueNotifier<String> _editedTaskDescription =
+      ValueNotifier<String>('');
 
   @override
   Widget build(BuildContext context) {
+    // Initialize the edited task name and description
+    _editedTaskName.value = taskName;
+    _editedTaskDescription.value = taskDescription;
+
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        backgroundColor: Helper().getAppBarColor(widget.taskType),
+        backgroundColor: AppUtils.colorController(taskType),
         centerTitle: true,
         title: Text(
           'Task Details',
@@ -54,7 +48,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
               color: AppColors.lightGreyColor,
             ),
             onPressed: () {
-              _showEditDialog(widget.taskID);
+              _showEditDialog(context);
             },
           ),
         ],
@@ -64,23 +58,45 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Title: $_editedTaskName',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleLarge!
-                  .copyWith(color: Colors.black),
+            ValueListenableBuilder<String>(
+              valueListenable: _editedTaskName,
+              builder: (context, value, child) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Title: ',
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleLarge!
+                          .copyWith(color: Colors.black),
+                    ),
+                    Text(
+                      value,
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium!
+                          .copyWith(color: Colors.black.withOpacity(0.8)),
+                    ),
+                  ],
+                );
+              },
             ),
             Divider(
               color: Colors.grey[800],
             ),
             const SizedBox(height: 16),
-            Text(
-              _editedTaskDescription,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium!
-                  .copyWith(color: Colors.black.withOpacity(0.9)),
+            ValueListenableBuilder<String>(
+              valueListenable: _editedTaskDescription,
+              builder: (context, value, child) {
+                return Text(
+                  value,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(color: Colors.black.withOpacity(0.9)),
+                );
+              },
             ),
           ],
         ),
@@ -88,43 +104,43 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
     );
   }
 
-  void _showEditDialog(int taskID) {
+  void _showEditDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Edit Task'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextFormField(
-              initialValue: _editedTaskName,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodySmall!
-                  .copyWith(color: Colors.black),
-              decoration: const InputDecoration(labelText: 'Task Name'),
-              onChanged: (value) {
-                setState(() {
-                  _editedTaskName = value;
-                });
-              },
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              initialValue: _editedTaskDescription,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodySmall!
-                  .copyWith(color: Colors.black),
-              decoration: const InputDecoration(labelText: 'Task Description'),
-              onChanged: (value) {
-                setState(() {
-                  _editedTaskDescription = value;
-                });
-              },
-            ),
-          ],
+        content: SingleChildScrollView(
+          // Wrap the content in SingleChildScrollView
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFormField(
+                initialValue: taskName,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall!
+                    .copyWith(color: Colors.black),
+                decoration: const InputDecoration(labelText: 'Task Name'),
+                onChanged: (value) {
+                  _editedTaskName.value = value;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                initialValue: taskDescription,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall!
+                    .copyWith(color: Colors.black),
+                decoration:
+                    const InputDecoration(labelText: 'Task Description'),
+                onChanged: (value) {
+                  _editedTaskDescription.value = value;
+                },
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton(
@@ -133,26 +149,50 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
             },
             child: const Text('Cancel'),
           ),
-         ElevatedButton(
+          ElevatedButton(
             onPressed: () async {
               final updatedTask = {
-                'name': _editedTaskName,
-                'description': _editedTaskDescription,
+                'name': _editedTaskName.value,
+                'description': _editedTaskDescription.value,
               };
               // Call the updateTask method from the TaskCubit
-              context.read<TaskCubit>().updateTask(widget.taskID, updatedTask);
-              Navigator.of(context).pop(); 
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Task updated successfully'),
-                ),
-              );
+              context
+                  .read<TaskCubit>()
+                  .updateTask(taskID, taskType, updatedTask);
+              Navigator.of(context).pop();
+
+              ToastContext().init(context);
+              Toast.show('Task updated successfully', duration: 3);
             },
             child: const Text('Save'),
           ),
-
         ],
       ),
     );
   }
 }
+
+
+
+     // AppUtils.showEditDialog(
+              //     context,
+              //     taskName,
+              //     (value) {
+              //       _editedTaskName.value = value;
+              //     },
+              //     (value) {
+              //       _editedTaskDescription.value = value;
+              //     },
+              //     taskDescription,
+              //     () async {
+              //       final updatedTask = {
+              //         'name': _editedTaskName.value,
+              //         'description': _editedTaskDescription.value,
+              //       };
+              //       // Call the updateTask method from the TaskCubit
+              //       context.read<TaskCubit>().updateTask(taskID, updatedTask);
+              //       Navigator.of(context).pop();
+
+              //       ToastContext().init(context);
+              //       Toast.show('Task updated successfully', duration: 3);
+              //     });

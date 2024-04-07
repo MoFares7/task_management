@@ -3,28 +3,29 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
+import 'package:task_management_fares/common/loading_btn.dart';
 import 'package:task_management_fares/common/primary_btn.dart';
 import 'package:task_management_fares/common/textbox_main.dart';
 import 'package:task_management_fares/core/app_colors.dart';
 import 'package:task_management_fares/core/app_route.dart';
+import 'package:task_management_fares/core/app_utils.dart';
+import 'package:task_management_fares/core/exceptions/api.exception.dart';
+import 'package:task_management_fares/feature/auth/data/models/user_moddel.dart';
+import 'package:task_management_fares/feature/auth/presentation/cubit/auth_cubit.dart';
 import 'package:task_management_fares/feature/auth/presentation/widgets/page_title.dart';
+import 'package:task_management_fares/feature/home/presentation/pages/home_screen.dart';
+import 'package:toast/toast.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
 
-  // static route() {
-  //   return MainRouteBuilder(
-  //     destinationPage: LoginScreen(),
-  //   );
-  // }
-
   final _formKey = GlobalKey<FormBuilderState>();
-  // UserModel _collectFormData() {
-  //   return UserModel(
-  //     email: _formKey.currentState!.fields['email']!.value,
-  //     password: _formKey.currentState!.fields['password']!.value,
-  //   );
-  // }
+  UserModel _collectFormData() {
+    return UserModel(
+      email: _formKey.currentState!.fields['email']!.value,
+      password: _formKey.currentState!.fields['password']!.value,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,24 +43,24 @@ class LoginScreen extends StatelessWidget {
                 // title
                 const PageTitle(title: ('Login')),
 
-                const SizedBox(height: 64),
+                const Gap(32),
 
                 // email field
                 TextBox(
-                  fieldName: "Email",
+                  fieldName: "email",
                   title: 'Email',
                   inputType: TextInputType.emailAddress,
                   validator: FormBuilderValidators.compose([
                     FormBuilderValidators.required(
                         errorText: ('email is required')),
-                    FormBuilderValidators.email(errorText: ('invalid_email'))
+                    FormBuilderValidators.email(errorText: ('invalid email'))
                   ]),
                 ),
-                const Gap(20),
+                const Gap(16),
 
                 // password field
                 TextBox(
-                  fieldName: "Password",
+                  fieldName: "password",
                   title: 'Password',
                   isPasswordField: true,
                   validator: FormBuilderValidators.compose([
@@ -67,18 +68,53 @@ class LoginScreen extends StatelessWidget {
                         errorText: ('Password is required')),
                   ]),
                 ),
-                const Gap(64),
+                const Gap(32),
 
-                PrimaryButton(
-                  backgroundColor: AppColors.primaryColor,
-                  label: ('Login'),
-                  hPadding: 72,
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {}
+                BlocListener<AuthCubit, AuthState>(
+                  listener: (context, state) {
+                    print(state);
+                    if (state is AuthLoading) {
+                      AppUtils.showLoadingDialog(context);
+                    }
+
+                    // hide the dialog
+                    if (state is UserLoggedIn) {
+                      Navigator.pop(context);
+                      print("object succeeessss");
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HomeScreen()));
+                    }
+
+                    // failure state
+                    if (state is UserLoginError) {
+                      // hide the dialog
+                      // Show the error message
+                      print("Error response body: ${state.errorMessage}");
+
+                      Navigator.of(context).pop();
+                      ToastContext().init(context);
+                      Toast.show(state.errorMessage, duration: 3);
+                    }
                   },
+                  child: PrimaryButton(
+                    backgroundColor: AppColors.primaryColor,
+                    label: ('Login'),
+                    hPadding: 72,
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        // gather data
+                        UserModel user = _collectFormData();
+
+                        // trigger the event
+                        context.read<AuthCubit>().login(user);
+                      }
+                    },
+                  ),
                 ),
 
-                const Gap(20),
+                const Gap(16),
 
                 // Don't Have an Account Section
                 Row(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:task_management_fares/core/app_colors.dart';
+import 'package:task_management_fares/core/app_utils.dart';
 import 'package:task_management_fares/feature/tasks/presentation/pages/task_details_screen.dart';
 
 class TaskBox extends StatelessWidget {
@@ -52,7 +53,10 @@ class TaskBox extends StatelessWidget {
               ),
               onPressed: () {
                 // Show options dialog
-                _showOptionsDialog(context);
+               AppUtils.showOptionsDialog(context, "are you sure to delete this task?",
+                    () {
+                  onDelete();
+                });
               },
             ),
             Center(
@@ -69,51 +73,6 @@ class TaskBox extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-
-  void _showOptionsDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("are you sure to delete this task?"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      onDelete();
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      "Yes",
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleSmall!
-                          .copyWith(color: Colors.black),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      "No",
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleSmall!
-                          .copyWith(color: Colors.black),
-                    ),
-                  )
-                ],
-              ),
-            ],
-          ),
-        );
-      },
     );
   }
 }

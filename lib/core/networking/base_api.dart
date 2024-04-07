@@ -22,7 +22,7 @@ class BaseApi {
     return client.get(
       Uri.parse('$baseUrl$path'),
       headers: {
-        'user-token': token ?? '',
+        'token': token ?? '',
         ..._defaultHeaders,
         ...?headers,
       },
@@ -39,7 +39,7 @@ class BaseApi {
       Uri.parse('$baseUrl$path'),
       body: body,
       headers: {
-        'user-token': token ?? '',
+        'token': token ?? '',
         ..._defaultHeaders,
         ...?headers,
       },

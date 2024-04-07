@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:task_management_fares/core/app_theme.dart';
 import 'package:task_management_fares/core/ioc/app_injector.dart';
+import 'package:task_management_fares/core/storage/storage.dart';
+import 'package:task_management_fares/feature/auth/presentation/cubit/auth_cubit.dart';
 import 'package:task_management_fares/feature/auth/presentation/pages/login_screen.dart';
 import 'package:task_management_fares/feature/home/presentation/pages/home_screen.dart';
 import 'package:responsive_framework/responsive_framework.dart';
@@ -12,7 +14,6 @@ import 'package:task_management_fares/feature/tasks/presentation/cubit/task_cubi
 final AppInjector appInjector = AppInjector();
 
 void main() async {
-  // ensure initialization
   WidgetsFlutterBinding.ensureInitialized();
 
   // make the notification bar color
@@ -29,26 +30,29 @@ void main() async {
   await GetStorage.init();
   await appInjector.init();
 
-  // run the app
   runApp(
-    MyApp(),
+     MyApp(),
   );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+   MyApp({super.key});
+  final LocalStorage localStorage = LocalStorage.instance;
+ 
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-         BlocProvider<TaskCubit>(
+        BlocProvider<AuthCubit>(
+          create: (context) => appInjector.inject<AuthCubit>(),
+          ),
+        BlocProvider<TaskCubit>(
           create: (context) => appInjector.inject<TaskCubit>(),
         ),
       ],
       child: MaterialApp(
-          title: 'Task Management',
+          title: 'Tasks Management',
           debugShowCheckedModeBanner: false,
           theme: AppTheme.light(),
           builder: (context, child) => ResponsiveBreakpoints.builder(
@@ -59,7 +63,8 @@ class MyApp extends StatelessWidget {
                   const Breakpoint(start: 801, end: 1920, name: DESKTOP),
                 ],
               ),
-          home: HomeScreen()),
+          home: localStorage.getToken() == null ?
+           LoginScreen() : HomeScreen()),
     );
   }
 }
